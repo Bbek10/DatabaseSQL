@@ -1,87 +1,52 @@
-psql --username=freecodecamp --dbname=postgres
 
-Your database isn't here. You can use the `.sql` file you created at the end of Part 1 to rebuild it. I recommend "splitting" the terminal. You can do that by clicking the "hamburger" menu at the top left of the window, going to the "Terminal" menu, and clicking "Split Terminal". Once you've done that, enter `psql -U postgres < students.sql` in it to rebuild the database.
 
-psql -U postgres < students.sql
 
-## WHERE CLAUSE
+World Cup Database
+This is one of the required projects to earn your certification. For this project, you will create a Bash script that enters information from World Cup games into PostgreSQL, then query the database for useful statistics.
+Instructions
+Follow the instructions and get all the user stories below to pass to finish the project.
+You start with several files, one of them is games.csv. It contains a comma-separated list of all games of the final three rounds of the World Cup tournament since 2014; the titles are at the top. It includes the year of each game, the round of the game, the winner, their opponent, and the number of goals each team scored. You need to do three things for this project:
+Part 1: Create the database
+Log into the psql interactive terminal with psql --username=freecodecamp --dbname=postgres and create your database structure according to the user stories below.
+Don't forget to connect to the database after you create it.
+CREATE DATABASE worldcup;
+\c world cup;
+Part 2: Insert the data
+Complete the insert_data.sh script to correctly insert all the data from games.csv into the database. The file is started for you. Do not modify any of the code you start with. Using the PSQL variable defined, you can make database queries like this: $($PSQL "<query_here>"). The tests have a 20 second limit, so try to make your script efficient. The less you have to query the database, the faster it will be. You can empty the rows in the tables of your database with TRUNCATE TABLE games, teams;
+You should connect to your worldcup database and then create teams and games tables
+CREATE TABLE teams();
+CREATE TABLE games();
+Your teams table should have a team_id column that is a type of SERIAL and is the primary key, and a name column that has to be UNIQUE
+ ALTER TABLE teams ADD COLUMN team_id SERIAL PRIMARY KEY;
+ALTER TABLE teams ADD COLUMN name VARCHAR(50) UNIQUE;
+Your games table should have winner_id and opponent_id foreign key columns that each reference team_id from the teams table
+ALTER TABLE games ADD COLUMN game_id SERIAL PRIMARY KEY;
+ ALTER TABLE games ADD COLUMN year INT;
+ALTER TABLE games ADD COLUMN round VARCHAR(50);
 
-students=> SELECT first_name, last_name, gpa FROM students WHERE gpa < 2.5;
+Your games table should have winner_id and opponent_id foreign key columns that each reference team_id from the teams table
+ALTER TABLE games ADD COLUMN winner_id INT NOT NULL;
+ALTER TABLE games ADD COLUMN opponent_id INT NOT NUll;
 
-The `<` only return rows where the `gpa` column was less than `2.5`. Some other operators are: `<`, `>`, `<=`, `>=`. View the same columns, but only rows for students with a `gpa` greater than or equal to `3.8`.
 
- SELECT first_name, last_name, gpa FROM students where gpa >= 3.8;
+ALTER TABLE games ADD COLUMN winner_goals INT NOT NULL;
+ALTER TABLE games ADD COLUMN opponent_goals INT NOT NULL;
 
-That only returned students with a GPA of 3.8 or better. There's equal (`=`) and not equal (`!=`) operators as well. View the same columns for students that don't have a 4.0 gpa.
 
- SELECT *  FROM majors where major != 'Game Design';
 
- SELECT *  FROM majors where major > 'Game Design';
+All of your columns should have the NOT NULL constraint
+​
+Your games table should have winner_id and opponent_id foreign key columns that each reference team_id from the teams table
+if column needs to be dropped
+ALTER TABLE game DROP winner_id;
 
- SELECT *  FROM majors where major  ≥ 'Game Design';
-
- SELECT *  FROM majors where major  < 'G';
-
-SELECT * FROM students WHERE last_name < 'M';
-
-### AND OR with WHERE
-
-SELECT * FROM students WHERE last_name < 'M' OR gpa = 3.9;
-
-SELECT * FROM students WHERE last_name < 'M' AND gpa = 3.9;
-
-SELECT * FROM students WHERE last_name < 'M' AND gpa = 3.9 OR gpa < 2.3;
-
-This showed all students whose GPA is less than 2.3 because the final `OR` condition was true for them. It didn't matter what their last name started with. You can group conditions together with parenthesis like this: `WHERE <condition_1> AND (<condition_2> OR <condition_2>)`. This would only return rows where `<condition_1>` is true and one of the others is true. View students whose last name is before `M` that have a GPA of 3.9 or less than 2.3.
-
-SELECT * FROM students WHERE last_name < 'M' AND  (gpa = 3.9 OR gpa < 2.3);
-
-### PATTERN FINDING  LIKE
-
-There's a few that contain the word Algorithms. You can use LIKE to find patterns in text like this: WHERE <column> LIKE '<pattern>'. An underscore (_) in a pattern will return rows that have any character in that spot. View the rows in this table with a course name that matches the pattern '_lgorithms'.
-
-### _
-
-SELECT * FROM courses where course LIKE '_lgorithms';
-
-%
-
-SELECT * FROM courses where course LIKE '%lgorithms';
-
-Combine the two pattern matching characters to show courses that have a second letter of e.
-
- SELECT * FROM courses where course LIKE '_e%';
-
-Nice job! Try viewing the courses with a space in their names
-
- SELECT * FROM courses where course LIKE '% %';
-
- SELECT * FROM courses where course NOT LIKE '% %';
-
-### ILIKE
-
-`ILIKE` will ignore the case of the letters when matching. Use it to see the courses with an `A` or `a`.
-
-Get A Hint
-
-SELECT * FROM courses where course ILIKE '%A%';
-
-SELECT * FROM courses where course NOT ILIKE '%A%';
-
-You combine these like any other conditions. View the courses that don't have a capital or lowercase
-
-SELECT * FROM courses where course NOT ILIKE '%A%' AND course LIKE '% %';
-
-### IS NULL
-
-SELECT * FROM students WHERE gpa IS NULL;
-
-SELECT * FROM students WHERE gpa IS NOT NULL;
-
-SELECT * FROM students WHERE major_id IS NULL AND gpa IS NOT NULL;
-
-### ORDER BY
-
-SELECT * FROM students ORDER BY gpa;
-
-That put the lowest GPA's at the top. When using `ORDER BY`, it will be in ascending (`ASC`) order by default. Add `DESC` (descending) at the end of the last query to put the highest ones at the top.
+ALTER TABLE games ADD FOREIGN KEY (winner_id) REFERENCES teams(team_id); 
+ALTER TABLE games ADD FOREIGN KEY (opponent_id) REFERENCES teams(team_id); 
+​
+Your two script (.sh) files should have executable permissions. Other tests involving these two files will fail until permissions are correct. When these permissions are enabled, the tests will take significantly longer to run
+chmod +x insert_data.sh
+chmod +x queries.sh
+Part 3: Query the database
+Try Notion AI
+Find pages, get instant answers with Q&A
+Table
